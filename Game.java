@@ -3,7 +3,7 @@ import java.util.Random;
 public class Game {
 
     private final Random rnd = new Random();
-    private int[][] field = null;
+    public int[][] field = null;   // сделано public, чтобы проще было писать тест
     private int colorCount = 0;
 
 
@@ -16,7 +16,7 @@ public class Game {
         this.colorCount = colorCount;
     }
 
-// каждая функция меняет поле в зависимости от нажатой клавиши
+    // каждая функция меняет поле в зависимости от нажатой клавиши
 // 1. Передвигает все клеточки
 // 2. Проверяет возможность добавления новой клеточки
 // если да - добавляет
@@ -24,108 +24,114 @@ public class Game {
     // выглядит ужасно
     public boolean upButtonPress() {
         boolean wasAnyMoving = false;
-        boolean wasSumInIteration; // чтобы 2 2 4 превращалось в 4 4, а не в 8
-        for (int i = 0; i < getColCount(); i++) {
-            wasSumInIteration = false;
-            for (int j = 0; j < getRowCount(); j++) { // j - индекс взятой клетки
-
-                for (int k = j; k > 0; k--) { // двигаем j раз
-                    if (field[k - 1][i] == 0) { // если пусто - передвигаем
-                        field[k - 1][i] = field[k][i];
-                        field[k][i] = 0;
-                        if (field[k - 1][i] != 0 || field[k][i] != 0) wasAnyMoving = true; // чтобы не двигать нули
-                    }
-                    if (field[k - 1][i] == field[k][i] && field[k - 1][i] != 0 && !wasSumInIteration) { // равно - складываем
-                        field[k - 1][i] = field[k - 1][i] * 2; // чтобы не двигать нули
-                        field[k][i] = 0;
-                        wasSumInIteration = true;
-                        wasAnyMoving = true;
-                        break;
-
+        for (int j = 0; j < getColCount(); j++) {
+            for (int i = 0; i < getRowCount(); i++)  // клетку которую мы берем и относительно которой рассматриваем дальше
+            {
+                for (int k = i + 1; k < getRowCount(); k++) {
+                    if (field[k][j] != 0)  // 0 клетки не трогаем (логично)
+                    {
+                        if (field[i][j] == 0)  //  передвигаем если следующая 0
+                        {
+                            field[i][j] = field[k][j];
+                            field[k][j] = 0;
+                            wasAnyMoving = true;
+                        } else {
+                            if (field[i][j] == field[k][j]) {   // передвигаем если равно
+                                field[i][j] += field[k][j];
+                                field[k][j] = 0;
+                                wasAnyMoving = true;
+                            }
+                            break;
+                        }
                     }
                 }
-
             }
         }
         if (wasAnyMoving) addRandomCell();
         return wasAnyMoving;
     }
 
-    public boolean downButtonPress() { //
+    public boolean downButtonPress() {
         boolean wasAnyMoving = false;
-        boolean wasSumInIteration;
-        for (int i = 0; i < getColCount(); i++) {
-            wasSumInIteration = false;
-            for (int j = getRowCount() - 1; j >= 0; j--) {
-                for (int k = j; k < getRowCount() - 1; k++) {
-                    if (field[k + 1][i] == 0) {
-                        field[k + 1][i] = field[k][i];
-                        field[k][i] = 0;
-                        if (field[k + 1][i] != 0 || field[k][i] != 0) wasAnyMoving = true;
-                    }
-                    if (field[k + 1][i] == field[k][i] && field[k + 1][i] != 0 && !wasSumInIteration) {
-                        field[k + 1][i] = field[k + 1][i] * 2;
-                        field[k][i] = 0;
-                        wasAnyMoving = true;
-                        wasSumInIteration = true;
-                        break;
+        for (int j = 0; j < getColCount(); j++) {
+            for (int i = getRowCount() - 1; i >= 0; i--)
+            {
+                for (int k = i - 1; k >= 0; k--) {
+                    if (field[k][j] != 0)
+                    {
+                        if (field[i][j] == 0)
+                        {
+                            field[i][j] = field[k][j];
+                            field[k][j] = 0;
+                            wasAnyMoving = true;
+                        } else {
+                            if (field[i][j] == field[k][j]) {
+                                field[i][j] += field[k][j];
+                                field[k][j] = 0;
+                                wasAnyMoving = true;
+                            }
+                            break;
+                        }
                     }
                 }
-
             }
         }
         if (wasAnyMoving) addRandomCell();
         return wasAnyMoving;
     }
 
-    public boolean rightButtonPress() { //
+    public boolean leftButtonPress() { // переделать
         boolean wasAnyMoving = false;
-        boolean wasSumInIteration;
-        for (int i = 0; i < getRowCount(); i++) {
-            wasSumInIteration = false;
-            for (int j = getColCount() - 1; j >= 0; j--) {
-                for (int k = j; k < getRowCount() - 1; k++) {
-                    if (field[i][k + 1] == 0) {
-                        field[i][k + 1] = field[i][k];
-                        field[i][k] = 0;
-                        if (field[i][k + 1] != 0 || field[i][k] != 0) wasAnyMoving = true;
-                    }
-                    if (field[i][k + 1] == field[i][k] && field[i][k] != 0 && !wasSumInIteration) {
-                        field[i][k + 1] = field[i][k + 1] * 2;
-                        field[i][k] = 0;
-                        wasAnyMoving = true;
-                        wasSumInIteration = true;
-                        break;
+        for (int j = 0; j < getRowCount(); j++) {
+            for (int i = 0; i < getColCount(); i++)
+            {
+                for (int k = i + 1; k < getColCount(); k++) {
+                    if (field[j][k] != 0)
+                    {
+                        if (field[j][i] == 0)
+                        {
+                            field[j][i] = field[j][k];
+                            field[j][k] = 0;
+                            wasAnyMoving = true;
+                        } else {
+                            if (field[j][k] == field[j][i]) {
+                                field[j][i] += field[j][k];
+                                field[j][k] = 0;
+                                wasAnyMoving = true;
+                            }
+                            break;
+                        }
                     }
                 }
-
             }
         }
         if (wasAnyMoving) addRandomCell();
         return wasAnyMoving;
     }
 
-    public boolean leftButtonPress() { //
+    public boolean rightButtonPress() {
         boolean wasAnyMoving = false;
-        boolean wasSumInIteration;
-        for (int i = 0; i < getRowCount(); i++) {
-            wasSumInIteration = false;
-            for (int j = 0; j < getColCount(); j++) {
-                for (int k = j; k > 0; k--) {
-                    if (field[i][k - 1] == 0) {
-                        field[i][k - 1] = field[i][k];
-                        field[i][k] = 0;
-                        if (field[i][k - 1] != 0 || field[i][k] != 0) wasAnyMoving = true;
-                    }
-                    if (field[i][k - 1] == field[i][k] && field[i][k] != 0 && !wasSumInIteration) {
-                        field[i][k - 1] = field[i][k - 1] * 2;
-                        field[i][k] = 0;
-                        wasAnyMoving = true;
-                        wasSumInIteration = true;
-                        break;
+        for (int j = 0; j < getRowCount(); j++) {
+            for (int i = getColCount() - 1; i >= 0; i--)
+            {
+                for (int k = i - 1; k >= 0; k--) {
+                    if (field[j][k] != 0)
+                    {
+                        if (field[j][i] == 0)
+                        {
+                            field[j][i] = field[j][k];
+                            field[j][k] = 0;
+                            wasAnyMoving = true;
+                        } else {
+                            if (field[j][k] == field[j][i]) {
+                                field[j][i] += field[j][k];
+                                field[j][k] = 0;
+                                wasAnyMoving = true;
+                            }
+                            break;
+                        }
                     }
                 }
-
             }
         }
         if (wasAnyMoving) addRandomCell();

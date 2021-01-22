@@ -19,7 +19,7 @@ public class MainForm extends JFrame {
     private static final int DEFAULT_COLOR_COUNT = 10;
 
     private static final int DEFAULT_GAP = 8;
-    private static final int DEFAULT_CELL_SIZE = 200;
+    private static final int DEFAULT_CELL_SIZE = 150;
     // цвета клеточек
     private static final Color[] COLORS = {
             Color.BLUE,
