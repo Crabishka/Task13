@@ -47,7 +47,6 @@ public class Game {
                 }
             }
         }
-        if (wasAnyMoving) addRandomCell();
         return wasAnyMoving;
     }
 
@@ -76,7 +75,6 @@ public class Game {
                 }
             }
         }
-        if (wasAnyMoving) addRandomCell();
         return wasAnyMoving;
     }
 
@@ -105,7 +103,6 @@ public class Game {
                 }
             }
         }
-        if (wasAnyMoving) addRandomCell();
         return wasAnyMoving;
     }
 
@@ -134,7 +131,6 @@ public class Game {
                 }
             }
         }
-        if (wasAnyMoving) addRandomCell();
         return wasAnyMoving;
     }
 
@@ -163,6 +159,30 @@ public class Game {
 
     }
 
+    public boolean isAnyTurnAvailable(int[][] field){   // я не придумал ничего лучше
+        for (int i = 0; i < getRowCount(); i++)
+            for (int j = 0; j < getColCount(); j++){
+                if (i - 1 < 0) {} // сверху
+                    else{
+                        if (field[i][j] == field[i-1][j] || field[i-1][j] == 0) return true;
+                }
+                if (j - 1 < 0) {}  //  слева
+                    else{
+                        if (field[i][j] == field[i][j-1] || field[i][j-1] == 0) return true;
+                }
+                if (j + 1 > getColCount() - 1) {}   // справа
+                else{
+                    if (field[i][j] == field[i][j+1] || field[i][j+1] == 0) return true;
+                }
+                if (i + 1 > getRowCount() - 1) {} // сниху
+                else{
+                    if (field[i+1][j] == field[i][j] || field[i+1][j] == 0) return true;
+                }
+            }
+        return false;
+    }
+
+
     public int getRowCount() {
         return field == null ? 0 : field.length;
     }
@@ -178,5 +198,6 @@ public class Game {
     public int getCell(int row, int col) {
         return (row < 0 || row >= getRowCount() || col < 0 || col >= getColCount()) ? 0 : field[row][col];
     }
+
 
 }

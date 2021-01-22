@@ -37,11 +37,7 @@ public class MainForm extends JFrame {
     private GameParams params = new GameParams(DEFAULT_ROW_COUNT, DEFAULT_COL_COUNT, DEFAULT_COLOR_COUNT);
     private Game game = new Game();
     // таймер
-    private int time = 0;
-    private Timer timer = new Timer(1000, e -> {
-        time++;
-        this.GameStatus.setText("Прошло времени (секунд): " + time);
-    });
+
 
     public MainForm() {
         this.setTitle("2048");
@@ -50,7 +46,7 @@ public class MainForm extends JFrame {
         this.pack();
 
         this.pack();
-   //     GameField.setFocusable(true);
+        //     GameField.setFocusable(true);
 
 
         SwingUtils.setShowMessageDefaultErrorHandler();
@@ -95,21 +91,31 @@ public class MainForm extends JFrame {
         MainPanel.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode()==KeyEvent.VK_UP) {
-                    game.upButtonPress();
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    if (game.upButtonPress()) game.addRandomCell();
                     updateView();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    game.downButtonPress();
+                    if (game.downButtonPress()) game.addRandomCell();
                     updateView();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    game.leftButtonPress();
+                    if (game.leftButtonPress()) game.addRandomCell();
                     updateView();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    game.rightButtonPress();
+                    if (game.rightButtonPress()) game.addRandomCell();
                     updateView();
+                }
+               // Game tempGame = new Game();  // создаем новый класс с своим полем, чтобы проверять возможность ходов
+               // tempGame.field = game.field;  // не работает, так как у всех объектов класса один и тот же field 
+                if (!game.isAnyTurnAvailable(game.field)) {
+                    GameStatus.setText("Вы проиграли! Нажмите Enter для новой игры");
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        newGame();
+                        updateWindowSize();
+                        updateView();
+                    }
                 }
 
             }
@@ -132,12 +138,14 @@ public class MainForm extends JFrame {
     }
 
     private Font font = null;
+
     private Font getFont(int size) {
         if (font == null || font.getSize() != size) {
             font = new Font("Comic Sans MS", Font.BOLD, size);
         }
         return font;
     }
+
     // рисуем клеточку
     private void paintCell(int row, int column, Graphics2D g2d, int cellWidth, int cellHeight) {
         int cellValue = game.getCell(row, column);
@@ -147,7 +155,7 @@ public class MainForm extends JFrame {
         if (cellValue <= 0) {
             return;
         }
-        Color color = COLORS[(int)((Math.log(cellValue+1) / Math.log(2.0))) % 10];
+        Color color = COLORS[(int) ((Math.log(cellValue + 1) / Math.log(2.0))) % 10];
 
         int size = Math.min(cellWidth, cellHeight);
         int bound = (int) Math.round(size * 0.1);
@@ -173,8 +181,7 @@ public class MainForm extends JFrame {
                 game.getRowCount(), game.getColCount(),
                 GameField.getRowHeight(), GameField.getRowHeight()
         );
-        time = 0;
-        timer.start();
+        GameStatus.setText("Вы играете!");
         updateView();
         game.addRandomCell();
         game.addRandomCell();
